@@ -1,0 +1,147 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { DemoAIService } from "../lib/ai/DemoAIService";
+import type { ConversationStage, ConversationState } from "../lib/ai/types";
+import { findTreatmentByKeyword } from "../lib/knowledge-base/treatments";
+
+const service = new DemoAIService();
+
+function atStage(stage: ConversationStage): ConversationState {
+  return { ...service.initialState(), stage };
+}
+
+test("handles natural treatment variants without substring matches", () => {
+  for (const [phrase, expected] of [
+    ["I’m interested in invisible braces", "Invisalign"],
+    ["I want whiter teeth", "Teeth Whitening"],
+    ["What about a check-up?", "General Dentistry"],
+    ["I'd like to replace a tooth", "Dental Implants"],
+  ]) {
+    const reply = service.respond(service.initialState(), phrase);
+    assert.equal(reply.state.treatmentInterest, expected, phrase);
+    assert.equal(reply.state.stage, "offer_consult", phrase);
+  }
+  assert.equal(findTreatmentByKeyword("This sounds fulfilling"), undefined);
+  assert.equal(findTreatmentByKeyword("Can you explain the straightener?"), undefined);
+});
+
+test("pricing questions always defer to staff without inventing an amount", () => {
+  for (const phrase of ["How much?", "Can I get an estimate?", "What's the fee for a consultation?", "Is Invisalign expensive?", "Do implants cost $100?"]) {
+    const reply = service.respond(service.initialState(), phrase);
+    assert.equal(reply.state.askedPricing, true, phrase);
+    assert.equal(reply.state.stage, "offer_consult", phrase);
+    assert.match(reply.message, /don't have a verified price or estimate/);
+    assert.doesNotMatch(reply.message, /\$|\d/);
+  }
+});
+
+test("booking requests advance from both discovery and the consultation offer", () => {
+  for (const stage of ["exploring", "offer_consult"] as const) {
+    for (const phrase of ["I'd like to book a visit", "Can I schedule a cleaning?", "Can I see a dentist?", "Do you have any availability?", "Book Invisalign", "I’d like an appointment", "Can I book a Saturday consultation?", "I'd like to book my first visit"]) {
+      const reply = service.respond(atStage(stage), phrase);
+      assert.equal(reply.state.stage, "awaiting_name", `${stage}: ${phrase}`);
+      assert.match(reply.message, /What's your name/);
+      assert.equal(reply.leadReady, false);
+    }
+  }
+});
+
+test("polite declines never count as consent", () => {
+  for (const phrase of ["No thanks, please", "No, please don't", "I'm not ready", "Maybe later", "I don't want to book"]) {
+    const reply = service.respond(atStage("offer_consult"), phrase);
+    assert.equal(reply.state.stage, "exploring", phrase);
+    assert.deepEqual(reply.state.draft, {});
+  }
+  assert.equal(service.respond(atStage("offer_consult"), "Let’s do it").state.stage, "awaiting_name");
+});
+
+test("yes with a follow-up question answers it before gathering details", () => {
+  const reply = service.respond(atStage("offer_consult"), "Yes, but how much does it cost?");
+  assert.equal(reply.state.stage, "offer_consult");
+  assert.equal(reply.state.askedPricing, true);
+  assert.match(reply.message, /verified price/);
+});
+
+test("medical questions hand off to staff at every stage", () => {
+  const stages: ConversationStage[] = ["exploring", "offer_consult", "awaiting_name", "awaiting_contact", "awaiting_day", "awaiting_time", "completed"];
+  for (const stage of stages) {
+    for (const phrase of ["I have a toothache", "I'm in pain", "My email is alex@example.com and I'm in pain", "Am I a candidate for Invisalign?", "Can you diagnose this?", "Is it safe while pregnant?", "What antibiotics should I take?"]) {
+      const original = { ...atStage(stage), draft: { name: "Alex" } };
+      const reply = service.respond(original, phrase);
+      assert.match(reply.message, /dental team needs to evaluate medical questions/);
+      assert.deepEqual(reply.state.draft, original.draft);
+      assert.equal(reply.state.stage, stage === "exploring" ? "offer_consult" : stage);
+      assert.equal(reply.leadReady, false);
+    }
+  }
+});
+
+test("business questions don't overwrite the field being collected", () => {
+  for (const stage of ["awaiting_name", "awaiting_contact", "awaiting_day", "awaiting_time"] as const) {
+    for (const phrase of ["Are you open Saturday?", "How much does whitening cost?", "Do you take insurance?", "Where's your office?", "What is parking like?"]) {
+      const state = { ...atStage(stage), draft: { name: "Alex" } };
+      const reply = service.respond(state, phrase);
+      assert.equal(reply.state.stage, stage, phrase);
+      assert.deepEqual(reply.state.draft, state.draft, phrase);
+      assert.equal(reply.leadReady, false);
+    }
+  }
+});
+
+test("captures the name rather than its introduction", () => {
+  for (const [phrase, name] of [["My name is María Pérez", "María Pérez"], ["I'm Will Price", "Will Price"], ["Will Smith", "Will Smith"]]) {
+    const reply = service.respond(atStage("awaiting_name"), phrase);
+    assert.equal(reply.state.draft.name, name);
+    assert.equal(reply.state.stage, "awaiting_contact");
+  }
+});
+
+test("does not accept arbitrary text or incomplete numbers as contact details", () => {
+  for (const phrase of ["not-an-email", "hello", "12345", "alex@", "alex@example", "555-0142"]) {
+    const reply = service.respond(atStage("awaiting_contact"), phrase);
+    assert.equal(reply.state.stage, "awaiting_contact", phrase);
+    assert.equal(reply.state.draft.contact, undefined, phrase);
+  }
+  for (const phrase of ["alex@example.com", "pain@example.com", "+1 (305) 555-0142", "(305) 555-0142", "My email is alex@example.com."]) {
+    const reply = service.respond(atStage("awaiting_contact"), phrase);
+    assert.equal(reply.state.stage, "awaiting_day", phrase);
+    assert.ok(reply.state.draft.contact);
+  }
+});
+
+test("records a complete request once and does not confirm an appointment", () => {
+  let state = service.initialState();
+  const messages = ["I'd like to schedule an Invisalign consultation", "My name is Alex Rivera", "alex@example.com", "Saturday", "Afternoon"];
+  for (const [index, message] of messages.entries()) {
+    const reply = service.respond(state, message);
+    state = reply.state;
+    assert.equal(reply.leadReady, index === messages.length - 1, message);
+    if (reply.leadReady) assert.match(reply.message, /not a confirmed appointment/);
+  }
+  assert.equal(state.stage, "completed");
+  assert.equal(state.treatmentInterest, "Invisalign");
+  assert.deepEqual(state.draft, { name: "Alex Rivera", contact: "alex@example.com", day: "Saturday", time: "Afternoon" });
+  assert.equal(service.respond(state, "Thank you").leadReady, false);
+  assert.match(service.respond(state, "Is my appointment confirmed?").message, /not a confirmed appointment/);
+});
+
+test("canceling collection clears an unfinished request", () => {
+  const state = { ...atStage("awaiting_day"), draft: { name: "Alex", contact: "alex@example.com" } };
+  const reply = service.respond(state, "Cancel my request");
+  assert.equal(reply.state.stage, "exploring");
+  assert.deepEqual(reply.state.draft, {});
+  assert.equal(reply.leadReady, false);
+  assert.deepEqual(state.draft, { name: "Alex", contact: "alex@example.com" });
+});
+
+test("fallbacks vary and keep unknown topics unclaimed", () => {
+  let state = service.initialState();
+  const messages = new Set<string>();
+  for (let i = 0; i < 3; i += 1) {
+    const reply = service.respond(state, "Tell me about something unknown");
+    state = reply.state;
+    messages.add(reply.message);
+    assert.equal(reply.leadReady, false);
+  }
+  assert.equal(messages.size, 3);
+});
