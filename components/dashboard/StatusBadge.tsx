@@ -1,12 +1,15 @@
+"use client";
+
+import { useLanguage } from "@/components/i18n/LanguageProvider";
 import type { LeadStatus } from "@/lib/leads/types";
 
-const LABELS: Record<LeadStatus, string> = {
-  NEW: "New",
-  CONTACTED: "Contacted",
-  QUALIFIED: "Qualified",
-  CONSULTATION_REQUESTED: "Consultation requested",
-  WON: "Won",
-  LOST: "Lost",
+export const STATUS_LABELS: Record<LeadStatus, [string, string]> = {
+  NEW: ["New", "Nuevo"],
+  CONTACTED: ["Contacted", "Contactado"],
+  QUALIFIED: ["Qualified", "Calificado"],
+  CONSULTATION_REQUESTED: ["Consultation requested", "Consulta solicitada"],
+  WON: ["Won", "Convertido"],
+  LOST: ["Lost", "Perdido"],
 };
 
 const STYLES: Record<LeadStatus, string> = {
@@ -19,9 +22,10 @@ const STYLES: Record<LeadStatus, string> = {
 };
 
 export function StatusBadge({ status }: { status: LeadStatus }) {
+  const { t } = useLanguage();
   return (
     <span className={`inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${STYLES[status]}`}>
-      {LABELS[status]}
+      {t(...STATUS_LABELS[status])}
     </span>
   );
 }

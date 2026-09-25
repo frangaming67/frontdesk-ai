@@ -1,8 +1,12 @@
+"use client";
+
 import type { ChatMessage } from "@/lib/leads/types";
+import { useLanguage } from "@/components/i18n/LanguageProvider";
 
 export function MessageBubble({ message }: { message: ChatMessage }) {
+  const { locale, t } = useLanguage();
   const isAI = message.role === "ai";
-  const time = new Date(message.timestamp).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+  const time = new Date(message.timestamp).toLocaleTimeString(locale === "es" ? "es-US" : "en-US", { hour: "numeric", minute: "2-digit" });
 
   return (
     <div className={`message-enter flex gap-2.5 ${isAI ? "justify-start" : "justify-end"}`}>
@@ -13,7 +17,7 @@ export function MessageBubble({ message }: { message: ChatMessage }) {
       )}
       <div className="max-w-[88%] sm:max-w-[85%]">
         <div className={`mb-1.5 flex items-center gap-2 text-[10px] text-ink-soft/75 ${isAI ? "" : "justify-end"}`}>
-          <span className="font-medium">{isAI ? "Receptionist" : "You"}</span>
+          <span className="font-medium">{isAI ? t("Receptionist", "Recepcionista") : t("You", "Tú")}</span>
           <span aria-hidden="true">·</span>
           <time dateTime={message.timestamp}>{time}</time>
         </div>

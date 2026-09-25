@@ -145,3 +145,98 @@ test("fallbacks vary and keep unknown topics unclaimed", () => {
   }
   assert.equal(messages.size, 3);
 });
+
+test("Spanish conversation captures accented names and preferences without confirming an appointment", () => {
+  const spanish = new DemoAIService("es");
+  assert.match(spanish.greeting(), /¡Hola!/);
+  let state = spanish.initialState();
+  const messages = ["Me interesa Invisalign. ¿Cuánto cuesta?", "Sí, solicitar una consulta", "Me llamo María Pérez", "Mi correo es maria@example.com", "Miércoles", "Por la tarde"];
+  for (const [index, message] of messages.entries()) {
+    const reply = spanish.respond(state, message);
+    state = reply.state;
+    assert.equal(reply.leadReady, index === messages.length - 1, message);
+    if (reply.leadReady) assert.match(reply.message, /No es una cita confirmada/);
+  }
+  assert.equal(state.stage, "completed");
+  assert.equal(state.treatmentInterest, "Invisalign");
+  assert.equal(state.askedPricing, true);
+  assert.deepEqual(state.draft, { name: "María Pérez", contact: "maria@example.com", day: "Miércoles", time: "Por la tarde" });
+  assert.equal(spanish.respond(state, "Gracias").leadReady, false);
+});
+
+test("Spanish prices and medical questions preserve the same safety boundaries", () => {
+  const spanish = new DemoAIService("es");
+  for (const phrase of ["¿Cuánto cuestan los implantes?", "¿Me dan un presupuesto?", "¿Invisalign cuesta $100?", "Cuanto sale una consulta"]) {
+    const reply = spanish.respond(spanish.initialState(), phrase);
+    assert.match(reply.message, /No tengo un precio ni un presupuesto verificado/);
+    assert.doesNotMatch(reply.message, /\$|\d/);
+    assert.equal(reply.state.askedPricing, true);
+  }
+  for (const stage of ["exploring", "offer_consult", "awaiting_name", "awaiting_contact", "awaiting_day", "awaiting_time", "completed"] as const) {
+    for (const phrase of ["Me duele una muela", "Tengo una infección", "¿Es seguro si estoy embarazada?", "¿Qué antibiótico tomo?", "Mi correo es alex@example.com y tengo dolor"]) {
+      const original = { ...atStage(stage), draft: { name: "María" } };
+      const reply = spanish.respond(original, phrase);
+      assert.match(reply.message, /equipo dental debe evaluar/);
+      assert.deepEqual(reply.state.draft, original.draft);
+      assert.equal(reply.leadReady, false);
+    }
+  }
+});
+
+test("Spanish side questions do not overwrite patient details or preferences", () => {
+  const spanish = new DemoAIService("es");
+  for (const stage of ["awaiting_name", "awaiting_contact", "awaiting_day", "awaiting_time"] as const) {
+    for (const phrase of ["¿Abren los sábados?", "Aceptan seguro?", "¿Cuál es su dirección?", "¿Cuánto cuesta el blanqueamiento?", "¿Hay estacionamiento?"]) {
+      const original = { ...atStage(stage), draft: { name: "María" } };
+      const reply = spanish.respond(original, phrase);
+      assert.equal(reply.state.stage, stage, phrase);
+      assert.deepEqual(reply.state.draft, original.draft, phrase);
+      assert.equal(reply.leadReady, false);
+    }
+  }
+  const insurance = spanish.respond(spanish.initialState(), "¿Aceptan seguro dental?");
+  assert.match(insurance.message, /cobertura/);
+  assert.doesNotMatch(insurance.message, /preguntas médicas/);
+});
+
+test("Spanish declines and cancellation never start or complete a request", () => {
+  const spanish = new DemoAIService("es");
+  for (const phrase of ["No, gracias", "Ahora no", "Solo estoy mirando", "Más tarde", "No quiero reservar"]) {
+    assert.equal(spanish.respond(atStage("offer_consult"), phrase).state.stage, "exploring", phrase);
+  }
+  assert.equal(spanish.respond(atStage("offer_consult"), "No hay problema").state.stage, "awaiting_name");
+  const canceled = spanish.respond({ ...atStage("awaiting_day"), draft: { name: "María", contact: "maria@example.com" } }, "Cancelar mi solicitud");
+  assert.equal(canceled.state.stage, "exploring");
+  assert.deepEqual(canceled.state.draft, {});
+  assert.equal(canceled.leadReady, false);
+});
+
+test("switching response language preserves the conversation state and canonical treatment", () => {
+  const spanish = new DemoAIService("es");
+  let reply = spanish.respond(spanish.initialState(), "Quiero solicitar una consulta por implantes");
+  assert.equal(reply.state.treatmentInterest, "Dental Implants");
+  reply = service.respond(reply.state, "Soy José López");
+  assert.match(reply.message, /Nice to meet you, José/);
+  assert.equal(reply.state.draft.name, "José López");
+  reply = spanish.respond(reply.state, "Mi correo es dolor@example.com");
+  assert.equal(reply.state.stage, "awaiting_day");
+  assert.equal(reply.state.draft.contact, "dolor@example.com");
+  assert.match(reply.message, /Qué día/);
+  assert.equal(reply.state.treatmentInterest, "Dental Implants");
+});
+
+test("Spanish treatment accents are optional and unknown facts stay unknown", () => {
+  const spanish = new DemoAIService("es");
+  assert.equal(spanish.respond(spanish.initialState(), "Me interesa odontologia general").state.treatmentInterest, "General Dentistry");
+  assert.equal(spanish.respond(spanish.initialState(), "Me interesan carillas").state.treatmentInterest, "Veneers");
+  assert.equal(spanish.respond(spanish.initialState(), "¿Cuánto tarda Invisalign?").state.askedPricing, false);
+  let state = spanish.initialState();
+  const fallbacks = new Set<string>();
+  for (let i = 0; i < 3; i += 1) {
+    const reply = spanish.respond(state, "Háblame de algo desconocido");
+    state = reply.state;
+    fallbacks.add(reply.message);
+    assert.equal(reply.leadReady, false);
+  }
+  assert.equal(fallbacks.size, 3);
+});

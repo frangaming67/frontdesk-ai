@@ -60,6 +60,11 @@ All data (practice, leads, patients) is fictional and created for this demo.
 
 ## Mejoras para las demos comerciales
 
+- Selector **English / Español** en la cabecera de la portada, el chat y el panel.
+  Traduce la interfaz y las nuevas respuestas del recepcionista; conserva las
+  conversaciones ya escritas y los datos de los contactos. La preferencia se guarda
+  durante un año en una cookie de idioma y se aplica al navegar o recargar.
+  Next.js lee esa cookie al renderizar las páginas, sin base de datos ni API externa.
 - Diseño coherente en landing, chat y dashboard, con navegación clara y tarjetas
   de leads en móvil. El chat muestra el progreso y ofrece respuestas rápidas.
 - Vista previa al compartir: título, descripción, Open Graph y Twitter Card con
