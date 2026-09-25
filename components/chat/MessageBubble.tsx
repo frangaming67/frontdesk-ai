@@ -2,24 +2,24 @@ import type { ChatMessage } from "@/lib/leads/types";
 
 export function MessageBubble({ message }: { message: ChatMessage }) {
   const isAI = message.role === "ai";
+  const time = new Date(message.timestamp).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+
   return (
-    <div className={`message-enter flex ${isAI ? "justify-start" : "justify-end"} gap-2.5`}>
+    <div className={`message-enter flex gap-2.5 ${isAI ? "justify-start" : "justify-end"}`}>
       {isAI && (
-        <div
-          aria-hidden
-          className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-teal text-[11px] font-semibold text-white"
-        >
-          AI
+        <div aria-hidden="true" className="mt-6 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-teal-tint text-[10px] font-semibold text-teal">
+          MS
         </div>
       )}
-      <div
-        className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-[15px] leading-relaxed ${
-          isAI
-            ? "rounded-tl-sm bg-white text-ink border border-line-soft"
-            : "rounded-tr-sm bg-ink text-white"
-        }`}
-      >
-        {message.text}
+      <div className="max-w-[88%] sm:max-w-[85%]">
+        <div className={`mb-1.5 flex items-center gap-2 text-[10px] text-ink-soft/75 ${isAI ? "" : "justify-end"}`}>
+          <span className="font-medium">{isAI ? "Receptionist" : "You"}</span>
+          <span aria-hidden="true">·</span>
+          <time dateTime={message.timestamp}>{time}</time>
+        </div>
+        <div className={`whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm leading-[1.7] [overflow-wrap:anywhere] ${isAI ? "rounded-tl-sm border border-line-soft bg-white text-ink" : "rounded-tr-sm bg-teal text-white"}`}>
+          {message.text}
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Icon } from "@/components/ui/Icon";
 import { leadRepository } from "@/lib/leads/LocalLeadRepository";
 import type { Lead } from "@/lib/leads/types";
 
@@ -37,11 +38,11 @@ export function DemoResetControl({ onReset }: { onReset: (leads: Lead[]) => void
   }
 
   return (
-    <section aria-label="Demo controls" className="rounded-2xl border border-line-soft bg-white p-4 sm:p-5">
+    <section aria-label="Demo controls" className="rounded-2xl border border-dashed border-line px-5 py-5 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-sm font-medium text-ink">Demo workspace</p>
-          <p className="mt-0.5 text-xs text-ink-soft">Fictional examples and test leads, saved only in this browser.</p>
+          <p className="text-sm font-medium text-ink">A workspace for your walkthrough</p>
+          <p className="mt-1 max-w-lg text-xs leading-relaxed text-ink-soft">Fictional examples and test leads, saved only in this browser. Reset anytime to start a fresh demo.</p>
         </div>
         <button
           ref={resetButton}
@@ -54,14 +55,15 @@ export function DemoResetControl({ onReset }: { onReset: (leads: Lead[]) => void
             setIsConfirming(true);
           }}
           disabled={isResetting}
-          className="rounded-full border border-line px-3.5 py-1.5 text-sm text-ink-soft transition-colors hover:border-teal hover:text-teal disabled:cursor-wait disabled:opacity-50"
+          className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-xs font-medium text-ink-soft transition-colors hover:bg-white hover:text-teal disabled:cursor-wait disabled:opacity-50"
         >
+          <Icon name="refresh" size={15} />
           Reset demo leads
         </button>
       </div>
 
       {isConfirming && (
-        <div id="demo-reset-confirmation" role="group" aria-labelledby="demo-reset-title" className="mt-4 rounded-xl bg-paper p-4">
+        <div id="demo-reset-confirmation" role="group" aria-labelledby="demo-reset-title" className="mt-4 rounded-xl border border-line-soft bg-white p-4 sm:p-5">
           <p id="demo-reset-title" className="text-sm font-medium text-ink">Reset this demo?</p>
           <p className="mt-1 text-sm text-ink-soft">
             This removes leads you created in this browser and restores the original fictional examples,
@@ -73,7 +75,7 @@ export function DemoResetControl({ onReset }: { onReset: (leads: Lead[]) => void
               type="button"
               onClick={closeConfirmation}
               disabled={isResetting}
-              className="rounded-full border border-line bg-white px-4 py-2 text-sm text-ink-soft transition-colors hover:border-teal disabled:cursor-wait disabled:opacity-50"
+              className="button-secondary disabled:cursor-wait disabled:opacity-50"
             >
               Cancel
             </button>
@@ -81,7 +83,7 @@ export function DemoResetControl({ onReset }: { onReset: (leads: Lead[]) => void
               type="button"
               onClick={resetDemo}
               disabled={isResetting}
-              className="rounded-full bg-ink px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-teal-deep disabled:cursor-wait disabled:opacity-50"
+              className="button-primary disabled:cursor-wait disabled:opacity-50"
             >
               {isResetting ? "Resetting…" : "Reset and restore examples"}
             </button>

@@ -5,6 +5,10 @@ Commercial demo of an AI receptionist for dental practices. Built with Next.js
 keys required. It runs locally or on Vercel; lead data stays in each visitor's
 browser. Hosting it does not create a shared database or notify the clinic.
 
+- Live demo: https://frontdesk-ai-flame.vercel.app
+- GitHub (private): https://github.com/frangaming67/frontdesk-ai
+- Pushes to `main` publish through the connected Vercel project.
+
 ## Run it
 
 ```bash
@@ -29,8 +33,8 @@ Then open http://localhost:3000
 1. Open `/chat` and ask about Invisalign (or click the suggested prompt).
 2. Say yes to a consultation, then give a name, contact, day, and time.
 3. On completion, a lead is created and stored in `localStorage`.
-4. Go to `/dashboard` — the new lead appears at the top and in the table.
-5. Click into the lead to see the full conversation.
+4. Click **View captured lead** to see the saved details and full conversation.
+5. Open `/dashboard` to search inquiries, filter their status or mark a lead contacted.
 
 ## Architecture
 
@@ -56,6 +60,8 @@ All data (practice, leads, patients) is fictional and created for this demo.
 
 ## Mejoras para las demos comerciales
 
+- Diseño coherente en landing, chat y dashboard, con navegación clara y tarjetas
+  de leads en móvil. El chat muestra el progreso y ofrece respuestas rápidas.
 - Vista previa al compartir: título, descripción, Open Graph y Twitter Card con
   imagen de 1200 × 630, generada por Next.js en `/opengraph-image`.
 - Dashboard: **Reset demo leads** → **Reset and restore examples** elimina los
@@ -87,8 +93,8 @@ Si `npx` pregunta si puede instalar Vercel CLI, aceptá. En el asistente de depl
 3. Dejá la detección de **Next.js** y los ajustes de build predeterminados.
 4. Al terminar, Vercel muestra el enlace de producción para compartir.
 
-El comando publica el proyecto en tu cuenta. No fue ejecutado como parte de las
-mejoras locales. Para publicar cambios posteriores, repetí `npx vercel@latest --prod`
+El proyecto ya está publicado y conectado al repositorio: los cambios en `main`
+se publican automáticamente. Para un deploy manual, ejecutá `npx vercel@latest --prod`
 desde la misma carpeta. [Documentación de Vercel CLI](https://vercel.com/docs/projects/deploy-from-cli).
 
 ### Alternativa: importar desde GitHub

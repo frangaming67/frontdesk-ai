@@ -1,26 +1,18 @@
 import Link from "next/link";
+import { Brand } from "@/components/ui/Brand";
+import { Icon } from "@/components/ui/Icon";
 
 export function Header() {
   return (
-    <header className="border-b border-line-soft">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 sm:px-8">
-        <Link href="/" className="font-display text-lg text-ink">
-          FrontDesk <span className="text-teal">AI</span>
-        </Link>
-        <nav className="hidden items-center gap-8 text-sm text-ink-soft sm:flex">
-          <a href="#problem" className="transition-colors hover:text-ink">
-            Why it matters
-          </a>
-          <a href="#product" className="transition-colors hover:text-ink">
-            How it works
-          </a>
+    <header className="sticky top-0 z-30 border-b border-line-soft bg-paper/95 backdrop-blur-md">
+      <div className="page-shell flex min-h-20 items-center justify-between gap-4">
+        <Brand />
+        <nav aria-label="Main navigation" className="hidden items-center gap-7 text-[13px] font-medium text-ink-soft md:flex">
+          <a href="#product" className="transition-colors hover:text-teal">How it works</a>
+          <Link href="/dashboard" className="transition-colors hover:text-teal">Explore the dashboard</Link>
+          <a href="#questions" className="transition-colors hover:text-teal">FAQs</a>
         </nav>
-        <Link
-          href="/chat"
-          className="rounded-full bg-ink px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-teal-deep"
-        >
-          See it in action
-        </Link>
+        <Link href="/chat" className="button-primary px-4 sm:px-5">Try the demo <Icon name="arrow-up-right" size={16} /></Link>
       </div>
     </header>
   );

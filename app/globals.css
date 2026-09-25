@@ -1,22 +1,20 @@
 @import "tailwindcss";
 
 :root {
-  --color-paper: #F4F6F4;
+  --color-paper: #F7F9F6;
   --color-paper-raised: #FFFFFF;
-  --color-ink: #0D2B29;
-  --color-ink-soft: #3C5250;
-  --color-teal: #1F6F5C;
-  --color-teal-deep: #14544A;
-  --color-teal-tint: #E6F0EC;
-  --color-gold: #D79A3B;
+  --color-ink: #142E29;
+  --color-ink-soft: #53665F;
+  --color-teal: #236B55;
+  --color-teal-deep: #163F33;
+  --color-teal-tint: #EAF2EC;
+  --color-gold: #946323;
   --color-gold-tint: #FBF0DD;
   --color-coral: #C1443C;
   --color-coral-tint: #F8E7E5;
   --color-line: #DCE3DE;
   --color-line-soft: #E9EEEA;
 
-  --font-display: var(--font-fraunces);
-  --font-body: var(--font-inter);
 }
 
 @theme inline {
@@ -33,8 +31,8 @@
   --color-coral-tint: var(--color-coral-tint);
   --color-line: var(--color-line);
   --color-line-soft: var(--color-line-soft);
-  --font-display: var(--font-display);
-  --font-body: var(--font-body);
+  --font-display: var(--font-fraunces), Georgia, serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 * {
@@ -43,17 +41,82 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 100px;
 }
 
 body {
   background: var(--color-paper);
   color: var(--color-ink);
-  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4 {
-  font-family: var(--font-display), Georgia, serif;
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-weight: 450;
+  letter-spacing: -0.035em;
 }
+
+button, a, input {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:not(:disabled), [role="button"] {
+  cursor: pointer;
+}
+
+button:disabled { cursor: not-allowed; }
+
+@layer components {
+  .page-shell {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+  }
+  .button-primary {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-teal px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-teal-deep disabled:opacity-50;
+    box-shadow: 0 2px 3px #142e290a;
+  }
+  .button-secondary {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-line bg-white px-5 py-3 text-sm font-medium text-ink transition-colors hover:border-teal/40 hover:bg-teal-tint disabled:opacity-50;
+  }
+  .eyebrow {
+    @apply text-[11px] font-semibold uppercase tracking-[0.16em] text-teal;
+  }
+  .surface {
+    @apply rounded-3xl border border-line-soft bg-white;
+    box-shadow: 0 3px 16px #142e2903;
+  }
+}
+
+.hero-orbit {
+  background-image: radial-gradient(circle at center, transparent 49%, #236b5510 49.2%, #236b5510 49.5%, transparent 49.7%), radial-gradient(circle at center, transparent 67%, #236b550d 67.2%, #236b550d 67.5%, transparent 67.7%);
+  background-size: 100% 100%;
+}
+
+.hero-preview {
+  box-shadow: 0 26px 70px -30px #163f333a, 0 3px 12px #163f3308;
+}
+
+.step-connector::after {
+  content: "";
+  position: absolute;
+  top: 22px;
+  left: 56px;
+  right: 0;
+  height: 1px;
+  background: var(--color-line);
+}
+
+.skip-link {
+  position: fixed;
+  left: 16px;
+  top: -80px;
+  z-index: 100;
+  border-radius: 8px;
+  background: var(--color-ink);
+  color: white;
+  padding: 12px 18px;
+}
+.skip-link:focus { top: 16px; }
 
 ::selection {
   background: var(--color-teal);
