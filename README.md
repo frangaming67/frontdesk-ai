@@ -1,9 +1,10 @@
 # FrontDesk AI — Demo (Miami Smile Dental)
 
 Commercial demo of an AI receptionist for dental practices. Built with Next.js
-(App Router), TypeScript, and Tailwind CSS. No backend, no database, no API
-keys required. It runs locally or on Vercel; lead data stays in each visitor's
-browser. Hosting it does not create a shared database or notify the clinic.
+(App Router), TypeScript, and Tailwind CSS. Fictional mode needs no API keys.
+An optional server endpoint can verify contacts using Resend, Twilio Verify and
+Upstash Redis once configured; it is disabled by default. Lead data stays in each
+visitor's browser. Hosting does not create a shared lead database or notify a clinic.
 
 - Live demo: https://frontdesk-ai-flame.vercel.app
 - GitHub (private): https://github.com/frangaming67/frontdesk-ai
@@ -22,6 +23,8 @@ Then open http://localhost:3000
 - `/chat` — the AI receptionist (try the suggested prompt about Invisalign)
 - `/dashboard` — leads dashboard
 - `/dashboard/leads/[id]` — a single lead with its full conversation
+- `/privacy`, `/terms`, `/accessibility` — bilingual notices and local data deletion
+- `/api/verification` — availability and optional code delivery/checking
 
 > Note: fonts (Fraunces, Inter) load from Google Fonts at build/dev time via
 > `next/font/google`. You need normal internet access the first time you run
@@ -31,7 +34,9 @@ Then open http://localhost:3000
 ## How the demo flow works
 
 1. Open `/chat` and ask about Invisalign (or click the suggested prompt).
-2. Say yes to a consultation, then give a name, contact, day, and time.
+2. Say yes to a consultation and give a fictional name. At the contact step,
+   choose the fictional example (no sends) or explicitly request/verify a real
+   code when that channel is enabled. Then choose a day and time.
 3. On completion, a lead is created and stored in `localStorage`.
 4. Click **View captured lead** to see the saved details and full conversation.
 5. Open `/dashboard` to search inquiries, filter their status or mark a lead contacted.
@@ -56,7 +61,25 @@ Then open http://localhost:3000
 - `data/seed-leads.ts` — fictional leads so the dashboard isn't empty on
   first load.
 
-All data (practice, leads, patients) is fictional and created for this demo.
+Practice and seed data are fictional. Visitors must avoid patient or health data.
+Optional verified contact details are real personal data; see the privacy notice.
+
+## Scroll, verificación y avisos legales
+
+El recorrido verde se expande con el scroll y dibuja las conexiones entre preguntas,
+recepcionista y resultados. Conserva Fraunces/Inter y la paleta original. En móvil,
+pantallas bajas o con movimiento reducido, se muestra completo y estático.
+
+La verificación **no está activa** sin servicios, credenciales y datos del responsable.
+Nunca simula un envío exitoso: permite seguir con `alex@example.com` sin enviar nada.
+Los códigos no entran en la conversación ni en localStorage. Los adaptadores reales
+están implementados, pero la entrega real requiere validación con cuentas configuradas.
+
+- [Activar email/SMS en Vercel](docs/verification-setup.md)
+- [Revisión legal y pendientes antes de operar](docs/legal-review.md)
+
+El aviso público no sustituye asesoramiento legal ni certifica cumplimiento HIPAA.
+Falta completar identidad/contacto del operador; no se inventaron datos legales.
 
 ## Mejoras para las demos comerciales
 
@@ -146,7 +169,8 @@ Sin esas variables, el entorno local usa `http://localhost:3000`.
 **Límite de esta demo:** cada navegador y cada dominio tienen sus propios leads.
 Los datos de `localhost` no se transfieren al dominio de Vercel, y no vas a ver
 desde tu computadora los leads que genere un prospecto en la suya. No se envían
-emails ni se reservan citas reales.
+solicitudes a una clínica ni se reservan citas reales. Los únicos mensajes reales
+posibles son códigos de verificación solicitados expresamente, una vez configurados.
 
 ## Validación local
 

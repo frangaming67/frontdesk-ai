@@ -17,15 +17,15 @@ const EMAIL = /[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\
 const PHONE = /\+?\(?\d[\d\s().-]{7,}\d/;
 const FALLBACKS = [
   "I can help with Invisalign, implants, veneers, whitening, general dentistry, or office details. What would you like to know?",
-  "I don't have that information in this demo. You can ask about a treatment, pricing, insurance, or office hours, or I can help you request a consultation for the team to follow up.",
+  "I don't have that information in this demo. You can ask about a treatment, pricing, insurance, or office hours, or try a fictional consultation request.",
   "Could you rephrase that, or tell me which treatment interests you? You can also say 'request a consultation' and I'll help you get started.",
 ];
 const FALLBACKS_ES = [
   "Puedo ayudarte con Invisalign, implantes, carillas, blanqueamiento, odontología general o información de la clínica. ¿Qué te gustaría saber?",
-  "No tengo esa información en esta demo. Puedes preguntar por tratamientos, precios, seguros u horarios, o solicitar una consulta para que el equipo te contacte.",
+  "No tengo esa información en esta demo. Puedes preguntar por tratamientos, precios, seguros u horarios, o probar una solicitud de consulta ficticia.",
   "¿Podrías reformular tu pregunta o decirme qué tratamiento te interesa? También puedes escribir 'solicitar una consulta' para comenzar.",
 ];
-const MEDICAL_DEFLECTION = "Our dental team needs to evaluate medical questions directly. I can't assess symptoms or recommend treatment here.";
+const MEDICAL_DEFLECTION = "Our dental team needs to evaluate medical questions directly. I can't assess symptoms or recommend treatment here. For an emergency, call 911 in the US or your local emergency number; this demo is not monitored.";
 const CONSULT_PROMPT = "Would you like me to help you request a consultation?";
 
 function isNegative(text: string) {
@@ -78,7 +78,7 @@ export class DemoAIService implements AIService {
     if (MEDICAL.test(text) || MEDICAL_ES.test(text)) {
       const followUp = this.pendingPrompt(next.stage) ?? (next.stage === "completed" ? this.t("Please discuss this with the dental team directly.", "Consulta esto directamente con el equipo dental.") : this.consultPrompt);
       if (next.stage === "exploring") next.stage = "offer_consult";
-      return { message: `${this.t(MEDICAL_DEFLECTION, "El equipo dental debe evaluar las preguntas médicas directamente. No puedo evaluar síntomas ni recomendar tratamientos aquí.")} ${followUp}`, state: next, leadReady: false };
+      return { message: `${this.t(MEDICAL_DEFLECTION, "El equipo dental debe evaluar las preguntas médicas directamente. No puedo evaluar síntomas ni recomendar tratamientos aquí. En una emergencia, llama al 911 en EE. UU. o al número local; esta demo no está monitoreada.")} ${followUp}`, state: next, leadReady: false };
     }
 
     if (next.stage.startsWith("awaiting_")) {
@@ -123,13 +123,13 @@ export class DemoAIService implements AIService {
         next.draft.time = userMessage;
         next.stage = "completed";
         return {
-          message: this.t(`I've captured your consultation request and preferred time. This is not a confirmed appointment. A member of the ${practice.name} team will follow up to confirm availability and details.`, `Registré tu solicitud de consulta y tu horario preferido. No es una cita confirmada. El equipo de ${practice.name} se comunicará contigo para confirmar la disponibilidad y los detalles.`),
+          message: this.t("I've captured your demo consultation request and preferred time in this browser. This is not a confirmed appointment and no request is sent to a clinic. In real use, the dental team would follow up to confirm availability and details.", "Registré tu solicitud de prueba y tu horario preferido en este navegador. No es una cita confirmada y no se envía a una clínica. En un uso real, el equipo dental te contactaría para confirmar la disponibilidad y los detalles."),
           state: next,
           leadReady: true,
         };
       case "completed":
         return {
-          message: this.answerQuestion(next, text) ?? this.t("Your consultation request has already been captured. The team still needs to confirm availability and details; this is not a confirmed appointment.", "Tu solicitud de consulta ya está registrada. El equipo aún debe confirmar la disponibilidad y los detalles; no es una cita confirmada."),
+          message: this.answerQuestion(next, text) ?? this.t("Your demo request has already been captured in this browser. No clinic receives it; this is not a confirmed appointment.", "Tu solicitud de prueba ya está registrada en este navegador. Ninguna clínica la recibe; no es una cita confirmada."),
           state: next,
           leadReady: false,
         };
@@ -238,7 +238,7 @@ export class DemoAIService implements AIService {
   private handleAwaitingContact(state: ConversationState, text: string): AIReply {
     const contact = extractContact(text);
     if (!contact) {
-      return { message: this.t("Please share an email address (like alex@example.com) or a phone number with an area code so our team can reach you.", "Comparte un correo electrónico (como alex@example.com) o un teléfono con código de área para que nuestro equipo pueda contactarte."), state, leadReady: false };
+      return { message: this.t("Please share a demo email (like alex@example.com) or a phone number with an area code. The next step lets you choose fictional details or optional verification.", "Comparte un correo de prueba (como alex@example.com) o un teléfono con código de área. Después podrás elegir datos ficticios o una verificación opcional."), state, leadReady: false };
     }
     state.draft.contact = contact;
     state.stage = "awaiting_day";
@@ -252,7 +252,7 @@ export class DemoAIService implements AIService {
   private pendingPrompt(stage: ConversationStage): string | undefined {
     switch (stage) {
       case "awaiting_name": return this.t("What's your name?", "¿Cómo te llamas?");
-      case "awaiting_contact": return this.t("What's the best phone number or email for our team to reach you?", "¿Cuál es el mejor teléfono o correo para contactarte?");
+      case "awaiting_contact": return this.t("What email or phone number would you like to use for this demo? You can use alex@example.com. Nothing is sent without your permission in the next step.", "¿Qué correo o teléfono quieres usar en esta demo? Puedes usar alex@example.com. No se envía nada sin tu permiso en el siguiente paso.");
       case "awaiting_day": return this.t("What day would generally work best for a consultation?", "¿Qué día te vendría mejor para una consulta?");
       case "awaiting_time": return this.t("Do you generally prefer morning or afternoon?", "¿Prefieres por la mañana o por la tarde?");
       case "offer_consult": return this.consultPrompt;

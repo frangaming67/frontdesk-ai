@@ -8,6 +8,12 @@ export type LeadStatus =
 
 export type Intent = "HIGH" | "MEDIUM" | "LOW";
 
+export interface ContactVerificationRecord {
+  channel: "email" | "sms";
+  verifiedAt: string;
+  consentVersion: string;
+}
+
 export interface ChatMessage {
   id: string;
   role: "user" | "ai";
@@ -27,6 +33,8 @@ export interface Lead {
   status: LeadStatus;
   createdAt: string; // ISO string
   conversation: ChatMessage[];
+  // Informational demo metadata, not an authentication credential.
+  contactVerification?: ContactVerificationRecord;
 }
 
 export type NewLeadInput = Omit<Lead, "id" | "createdAt" | "status"> & {

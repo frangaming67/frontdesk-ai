@@ -78,6 +78,8 @@ export class LocalLeadRepository implements LeadRepository {
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   }
+
+  async clearDemo(): Promise<void> { this.write([]); }
 }
 
 export const leadRepository = new LocalLeadRepository();

@@ -3,6 +3,7 @@
 import { useState, type FormEvent, type RefObject } from "react";
 import { Icon } from "@/components/ui/Icon";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
+import Link from "next/link";
 
 export function ChatInput({
   onSend,
@@ -42,6 +43,7 @@ export function ChatInput({
           aria-disabled={disabled}
           placeholder={placeholder ?? t("Ask a question or request a consultation…", "Haz una pregunta o solicita una consulta…")}
           autoComplete="off"
+          maxLength={1000}
           enterKeyHint="send"
           aria-describedby="chat-input-hint"
           className="min-w-0 flex-1 bg-transparent px-2.5 py-2.5 text-base text-ink outline-none placeholder:text-ink-soft/65 focus-visible:outline-none disabled:opacity-60 sm:text-sm"
@@ -56,7 +58,7 @@ export function ChatInput({
         </button>
       </div>
       <p id="chat-input-hint" className="mt-2.5 text-center text-[10px] leading-4 text-ink-soft/80 sm:text-[11px]">
-        {t("Fictional practice · Use made-up details · No appointments booked", "Clínica ficticia · Usa datos inventados · No se reservan citas")}
+        {t("Demo · No health information · ", "Demo · Sin datos de salud · ")}<Link href="/privacy" target="_blank" rel="noreferrer" className="underline">{t("Privacy", "Privacidad")}</Link>{" · "}<Link href="/terms" target="_blank" rel="noreferrer" className="underline">{t("Terms", "Términos")}</Link>
       </p>
     </form>
   );

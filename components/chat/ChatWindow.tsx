@@ -5,10 +5,11 @@ import Link from "next/link";
 import { MessageBubble } from "./MessageBubble";
 import { TypingIndicator } from "./TypingIndicator";
 import { ChatInput } from "./ChatInput";
+import { ContactVerification } from "./ContactVerification";
 import { Icon } from "@/components/ui/Icon";
 import { DemoAIService } from "@/lib/ai/DemoAIService";
 import type { ConversationStage, ConversationState } from "@/lib/ai/types";
-import type { ChatMessage, Lead } from "@/lib/leads/types";
+import type { ChatMessage, Lead, ContactVerificationRecord } from "@/lib/leads/types";
 import { leadRepository } from "@/lib/leads/LocalLeadRepository";
 import { detectIntent } from "@/lib/intent/detectIntent";
 import { buildIntentSignals } from "@/lib/intent/buildSignals";
@@ -49,6 +50,8 @@ export function ChatWindow() {
   const [submittedLead, setSubmittedLead] = useState<Lead | null>(null);
   const [session, setSession] = useState(0);
   const [confirmingRestart, setConfirmingRestart] = useState(false);
+  const [pendingContact, setPendingContact] = useState<string | null>(null);
+  const [contactVerification, setContactVerification] = useState<ContactVerificationRecord | undefined>();
   const inputRef = useRef<HTMLInputElement>(null);
   const cancelRestartRef = useRef<HTMLButtonElement>(null);
   const restoreFocusRef = useRef<Element | null>(null);
@@ -84,7 +87,7 @@ export function ChatWindow() {
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: reducedMotion ? "instant" : "smooth" });
-  }, [messages, isTyping, retryMessage]);
+  }, [messages, isTyping, retryMessage, pendingContact]);
 
   useEffect(() => {
     if (!isTyping && restoreFocusRef.current) {
@@ -109,6 +112,8 @@ export function ChatWindow() {
     setConversationState(aiService.initialState());
     setSubmittedLead(null);
     setRetryMessage(null);
+    setPendingContact(null);
+    setContactVerification(undefined);
     setSession((current) => current + 1);
   }
 
@@ -122,8 +127,17 @@ export function ChatWindow() {
     inputRef.current?.focus();
   }
 
-  async function handleSend(text: string, retry = false) {
+  async function handleSend(text: string, retry = false, contactApproved = false, verification?: ContactVerificationRecord) {
     if (sendingRef.current || submittedLead || confirmingRestart) return;
+    if (pendingContact && !contactApproved) return;
+    if (conversationState.stage === "awaiting_contact" && !contactApproved) {
+      const preview = aiServiceRef.current.respond(conversationState, text);
+      if (preview.state.stage === "awaiting_day" && preview.state.draft.contact) {
+        setPendingContact(preview.state.draft.contact);
+        return;
+      }
+    }
+    if (contactApproved) { setPendingContact(null); setContactVerification(verification); }
     restoreFocusRef.current = document.activeElement;
     sendingRef.current = true;
     setRetryMessage(null);
@@ -154,6 +168,7 @@ export function ChatWindow() {
           preferredDay: reply.state.draft.day,
           preferredTime: reply.state.draft.time,
           conversation: finalMessages,
+          contactVerification,
         });
         if (mountedRef.current) setSubmittedLead(lead);
       }
@@ -221,6 +236,7 @@ export function ChatWindow() {
           <div className="my-5 w-full max-w-sm rounded-2xl border border-line bg-white px-4 py-3 text-left">
             <p className="text-sm font-semibold text-ink">{submittedLead.name}</p>
             <p className="mt-1 text-xs text-ink-soft">{treatmentLabel(submittedLead.treatment, locale)}</p>
+            <p className="mt-2 text-xs font-medium text-teal">{submittedLead.contactVerification ? t("Contact verified · No appointment booked", "Contacto verificado · Sin cita reservada") : t("Fictional contact · No message sent", "Contacto ficticio · No se envió ningún mensaje")}</p>
             <p className="mt-3 flex items-center gap-2 border-t border-line-soft pt-3 text-xs text-ink-soft"><Icon name="calendar" size={14} />{preferenceLabel(submittedLead.preferredDay, locale)} · {preferenceLabel(submittedLead.preferredTime, locale)}</p>
           </div>
           <Link href={`/dashboard/leads/${submittedLead.id}`} className="button-primary w-full max-w-sm justify-center">{t("View captured lead", "Ver contacto registrado")} <Icon name="arrow-right" size={16} /></Link>
@@ -240,7 +256,8 @@ export function ChatWindow() {
                 <button type="button" onClick={() => handleSend(retryMessage, true)} className="ml-1 font-semibold underline underline-offset-4">{t("Try again", "Reintentar")}</button>
               </div>
             )}
-            {!isTyping && !retryMessage && !confirmingRestart && (
+            {pendingContact && !confirmingRestart && <ContactVerification contact={pendingContact} onComplete={(contact, verification) => void handleSend(contact, false, true, verification)} onCancel={() => { setPendingContact(null); inputRef.current?.focus(); }} />}
+            {!pendingContact && !isTyping && !retryMessage && !confirmingRestart && (
               <div className="pl-[38px]">
                 {messages.length === 1 && <p className="mb-2.5 text-[10px] font-medium uppercase tracking-[0.1em] text-ink-soft/75">{t("Try asking about", "Prueba preguntar por")}</p>}
                 <div className="flex flex-wrap gap-2">
@@ -253,7 +270,7 @@ export function ChatWindow() {
               </div>
             )}
           </div>
-          <ChatInput key={session} inputRef={inputRef} onSend={handleSend} onDraftChange={() => { hasUserTyped.current = true; }} disabled={isTyping || confirmingRestart} placeholder={placeholders[conversationState.stage]} />
+          <ChatInput key={session} inputRef={inputRef} onSend={handleSend} onDraftChange={() => { hasUserTyped.current = true; }} disabled={isTyping || confirmingRestart || !!pendingContact} placeholder={pendingContact ? t("Choose how to continue above", "Elige cómo continuar arriba") : placeholders[conversationState.stage]} />
         </>
       )}
     </div>

@@ -15,4 +15,6 @@ export interface LeadRepository {
   updateStatus(id: string, status: LeadStatus): Promise<Lead | undefined>;
   /** Replace this browser's demo leads with the original fictional examples. */
   resetDemo(): Promise<Lead[]>;
+  /** Erase saved demo requests without restoring examples. */
+  clearDemo(): Promise<void>;
 }

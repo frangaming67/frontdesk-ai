@@ -88,3 +88,12 @@ test("a failed reset rejects and leaves existing leads untouched", async () => {
   assert.deepEqual(await repository.getAll(), beforeReset);
   assert.equal((await repository.getById(created.id))?.name, "Keep on failure");
 });
+
+test("privacy deletion stays empty after reload and preserves other site preferences", async () => {
+  await repository.getAll(); storage.setItem("other", "keep");
+  await repository.clearDemo();
+  assert.deepEqual(await new LocalLeadRepository().getAll(), []);
+  assert.equal(storage.getItem("other"), "keep");
+  storage.failWrites = true;
+  await assert.rejects(repository.clearDemo(), /Storage unavailable/);
+});

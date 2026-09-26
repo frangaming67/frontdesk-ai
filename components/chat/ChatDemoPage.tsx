@@ -7,6 +7,7 @@ import { Icon } from "@/components/ui/Icon";
 import { practice } from "@/lib/knowledge-base";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
 import { LanguageSwitcher } from "@/components/i18n/LanguageSwitcher";
+import { LegalLinks } from "@/components/legal/LegalLinks";
 
 export function ChatDemoPage() {
   const { t } = useLanguage();
@@ -49,7 +50,7 @@ export function ChatDemoPage() {
               {t("Ask about a treatment or office hours. Then request a consultation to see how a conversation becomes a lead.", "Pregunta por un tratamiento o los horarios. Luego solicita una consulta para ver cómo una conversación se convierte en un contacto para la clínica.")}
             </p>
             <div className="mt-5 border-t border-line-soft pt-4 text-xs leading-5 text-ink-soft">
-              <span className="font-semibold text-teal">{t("A quick tip:", "Un consejo:")}</span> {t("use a made-up name and contact details. This is a demo, so nobody will contact you.", "usa un nombre y datos de contacto inventados. Es una demo, así que nadie se comunicará contigo.")}
+              <span className="font-semibold text-teal">{t("A quick tip:", "Un consejo:")}</span> {t("use a made-up name and no health information. At the contact step, choose a fictional example or request a real verification code if sending is enabled.", "usa un nombre inventado y no compartas información de salud. En el paso de contacto, elige un ejemplo ficticio o solicita un código real si el envío está habilitado.")}
             </div>
           </div>
 
@@ -71,6 +72,7 @@ export function ChatDemoPage() {
           <ChatWindow />
         </section>
       </main>
+      <div className="px-4 pb-6"><p className="mb-3 text-center text-[11px] text-ink-soft">{t("For adults 18+ · No medical advice · In an emergency call 911 (US) or your local emergency number.", "Para mayores de 18 años · Sin asesoramiento médico · En una emergencia llama al 911 (EE. UU.) o al número local.")}</p><LegalLinks /></div>
     </div>
   );
 }

@@ -64,6 +64,7 @@ export default function LeadDetailPage() {
               <aside className="space-y-5">
                 <section className="rounded-[24px] border border-line-soft bg-white p-6">
                   <h2 className="font-display text-xl text-ink">{t("Contact details", "Datos de contacto")}</h2>
+                  <p className="mt-3 rounded-xl bg-teal-tint p-3 text-xs leading-5 text-teal-deep">{lead.contactVerification ? t(`Contact verified by ${lead.contactVerification.channel === "email" ? "email" : "SMS"}. This does not confirm an appointment.`, `Contacto verificado por ${lead.contactVerification.channel === "email" ? "email" : "SMS"}. No confirma una cita.`) : t("Demo contact · Not verified", "Contacto de prueba · Sin verificar")}</p>
                   <div className="mt-5 space-y-5">
                     <div>
                       <p className="mb-1.5 text-xs text-ink-soft">{t("Email address", "Correo electrónico")}</p>

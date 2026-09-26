@@ -3,6 +3,7 @@
 import { useLanguage } from "@/components/i18n/LanguageProvider";
 import { Header } from "@/components/landing/Header";
 import { Hero } from "@/components/landing/Hero";
+import { ScrollStory } from "@/components/landing/ScrollStory";
 import { ProblemSection } from "@/components/landing/ProblemSection";
 import { ProductSection } from "@/components/landing/ProductSection";
 import { DemoCTA } from "@/components/landing/DemoCTA";
@@ -16,6 +17,7 @@ export default function Home() {
       <Header />
       <main id="main">
       <Hero />
+      <ScrollStory />
       <ProblemSection />
       <ProductSection />
       <DemoCTA />

@@ -16,6 +16,7 @@ export function DashboardHeader({ backHref, backLabel }: { backHref?: string; ba
           <Link href="/chat" className="rounded-xl px-3 py-2.5 text-sm font-medium text-ink-soft transition-colors hover:bg-paper hover:text-ink">{t("Chat demo", "Demo del chat")}</Link>
           <Link href="/dashboard" aria-current="page" className="rounded-xl bg-teal-tint px-3 py-2.5 text-sm font-semibold text-teal-deep">{t("Dashboard", "Panel")}</Link>
           <LanguageSwitcher />
+          <Link href="/privacy" className="rounded-xl px-3 py-2.5 text-xs text-ink-soft hover:text-teal">{t("Privacy & data", "Privacidad y datos")}</Link>
         </nav>
       </div>
       {backHref && backHref !== "/" && (
