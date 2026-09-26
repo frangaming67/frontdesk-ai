@@ -18,21 +18,44 @@ export function ScrollStory() {
     if (!element || !sticky) return;
 
     const desktop = window.matchMedia("(min-width: 900px) and (min-height: 650px)");
+    const mobile = window.matchMedia("(max-width: 899px)");
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const reveals = Array.from(element.querySelectorAll<HTMLElement>("[data-flow-reveal]"));
     let frame = 0;
+
+    // offsetTop ignores our reveal transforms, keeping the scroll math stable.
+    function layoutTop(node: HTMLElement) {
+      let top = 0;
+      let current: HTMLElement | null = node;
+      while (current && current !== element) {
+        top += current.offsetTop;
+        current = current.offsetParent as HTMLElement | null;
+      }
+      return top;
+    }
 
     function update() {
       frame = 0;
       if (!element || !sticky) return;
       const animate = desktop.matches && !reducedMotion.matches;
+      const animateMobile = mobile.matches && !reducedMotion.matches;
       element.dataset.animated = String(animate);
+      element.dataset.mobileAnimated = String(animateMobile);
       const rect = element.getBoundingClientRect();
       const top = parseFloat(getComputedStyle(sticky).top) || 0;
       // Use the actual sticky travel so every phase finishes before it unpins.
       const travel = Math.max(1, element.offsetHeight - sticky.offsetHeight);
-      const progress = animate ? clamp((top - rect.top) / travel) : 1;
+      const viewport = window.innerHeight;
+      const progress = animate ? clamp((top - rect.top) / travel)
+        : animateMobile ? clamp((viewport * .8 - rect.top) / element.offsetHeight) : 1;
+      const expand = animateMobile ? clamp((viewport * .95 - rect.top) / (viewport * .5)) : clamp(progress / .3);
+      // Read all positions before writing styles. Mobile keeps its natural height.
+      const revealProgress = reveals.map(node => animateMobile
+        ? clamp((viewport * .88 - rect.top - layoutTop(node)) / Math.min(180, viewport * .26))
+        : 1);
       element.style.setProperty("--flow-progress", progress.toFixed(4));
-      element.style.setProperty("--flow-expand", clamp(progress / .3).toFixed(4));
+      element.style.setProperty("--flow-expand", expand.toFixed(4));
+      reveals.forEach((node, index) => node.style.setProperty("--mobile-reveal", revealProgress[index].toFixed(4)));
     }
 
     function schedule() {
@@ -43,6 +66,7 @@ export function ScrollStory() {
     resize.observe(sticky);
     update();
     desktop.addEventListener("change", schedule);
+    mobile.addEventListener("change", schedule);
     reducedMotion.addEventListener("change", schedule);
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
@@ -50,6 +74,7 @@ export function ScrollStory() {
       cancelAnimationFrame(frame);
       resize.disconnect();
       desktop.removeEventListener("change", schedule);
+      mobile.removeEventListener("change", schedule);
       reducedMotion.removeEventListener("change", schedule);
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
@@ -103,17 +128,19 @@ export function ScrollStory() {
                 ))}
               </svg>
               <ol className="journey-nodes journey-inputs">
-                {incoming.map((item, index) => <li key={item.icon} className="journey-node" style={{ "--node-index": index } as CSSProperties}><span className="journey-node-icon"><Icon name={item.icon} size={19} /></span><div><h3>{item.label}</h3><p>{item.detail}</p></div></li>)}
+                {incoming.map((item, index) => <li key={item.icon} data-flow-reveal className="journey-node" style={{ "--node-index": index } as CSSProperties}><span className="journey-node-icon"><Icon name={item.icon} size={19} /></span><div><h3>{item.label}</h3><p>{item.detail}</p></div></li>)}
               </ol>
               <div className="journey-center">
-                <div className="journey-orbit" aria-hidden="true" />
-                <span className="journey-mark"><Icon name="message" size={35} /></span>
-                <p className="journey-brand">FrontDesk <span>AI</span></p>
-                <p className="journey-center-detail">{t("A warm welcome, at every step.", "Una cálida bienvenida, en cada paso.")}</p>
-                <span className="journey-center-tag"><span />{t("Every conversation, connected", "Cada conversación, conectada")}</span>
+                <span data-flow-reveal className="journey-mobile-connector journey-mobile-connector-in" aria-hidden="true" />
+                <span data-flow-reveal className="journey-mobile-connector journey-mobile-connector-out" aria-hidden="true" />
+                <div data-flow-reveal className="journey-orbit" aria-hidden="true" />
+                <span data-flow-reveal className="journey-mark"><Icon name="message" size={35} /></span>
+                <p data-flow-reveal className="journey-brand">FrontDesk <span>AI</span></p>
+                <p data-flow-reveal className="journey-center-detail">{t("A warm welcome, at every step.", "Una cálida bienvenida, en cada paso.")}</p>
+                <span data-flow-reveal className="journey-center-tag"><span />{t("Every conversation, connected", "Cada conversación, conectada")}</span>
               </div>
               <ol className="journey-nodes journey-results">
-                {outgoing.map((item, index) => <li key={item.icon} className="journey-node" style={{ "--node-index": index } as CSSProperties}><span className="journey-node-icon"><Icon name={item.icon} size={19} /></span><div><h3>{item.label}</h3><p>{item.detail}</p></div></li>)}
+                {outgoing.map((item, index) => <li key={item.icon} data-flow-reveal className="journey-node" style={{ "--node-index": index } as CSSProperties}><span className="journey-node-icon"><Icon name={item.icon} size={19} /></span><div><h3>{item.label}</h3><p>{item.detail}</p></div></li>)}
               </ol>
             </div>
             <div className="journey-bottom">

@@ -69,9 +69,11 @@ Optional verified contact details are real personal data; see the privacy notice
 El recorrido verde se fija mientras se ensancha con el scroll y revela tres etapas:
 consultas, conexión con FrontDesk y resultados para el equipo. Las líneas se dibujan
 en ese orden y el recorrido retrocede al subir. Funciona con rueda, barra y teclado,
-sin interceptar el desplazamiento del navegador. Se activa desde 900 × 650 px;
-en móvil, pantallas más bajas o con movimiento reducido, se muestra completo y
-estático. Conserva Fraunces/Inter y la paleta original.
+sin interceptar el desplazamiento del navegador. Desde 900 × 650 px se mantiene
+fijo durante el recorrido. En celular y tablet de menos de 900 px, se abre con
+el desplazamiento táctil y revela las tarjetas y conexiones de arriba hacia abajo,
+sin fijar la sección ni modificar la altura del contenido. Con movimiento reducido
+o sin JavaScript, se muestra completo y estático. Conserva Fraunces/Inter y la paleta original.
 
 La verificación **no está activa** sin servicios, credenciales y datos del responsable.
 Nunca simula un envío exitoso: permite seguir con `alex@example.com` sin enviar nada.
