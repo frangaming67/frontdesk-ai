@@ -7,9 +7,9 @@ export function formatRelativeDate(iso: string, locale: "en" | "es" = "en"): str
   if (diffDays === 0) return locale === "es" ? "Hoy" : "Today";
   if (diffDays === 1) return locale === "es" ? "Ayer" : "Yesterday";
   if (diffDays < 7) return locale === "es" ? `Hace ${diffDays} días` : `${diffDays} days ago`;
-  return date.toLocaleDateString(locale === "es" ? "es-US" : "en-US", { month: "short", day: "numeric" });
+  return date.toLocaleDateString(locale === "es" ? "es-AR" : "en-US", { month: "short", day: "numeric" });
 }
 
 export function formatTime(iso: string, locale: "en" | "es" = "en"): string {
-  return new Date(iso).toLocaleTimeString(locale === "es" ? "es-US" : "en-US", { hour: "numeric", minute: "2-digit" });
+  return new Date(iso).toLocaleTimeString(locale === "es" ? "es-AR" : "en-US", { hour: "numeric", minute: "2-digit" });
 }

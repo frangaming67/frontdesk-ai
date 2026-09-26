@@ -1,16 +1,16 @@
-// Single source of truth for Miami Smile Dental's identity and contact info.
-// FICTIONAL DATA — created for the FrontDesk AI commercial demo only.
-// Do not present as a real clinic; do not add real patient or medical data.
-
-const addressStreet = "1420 Biscayne Court, Miami, FL";
+// Fictional practice used only to demonstrate the product in Argentina.
+// No real location or contact channel is configured. A new name does not enable
+// production use: storage, access control and integrations require setup first.
+const name = process.env.NEXT_PUBLIC_PRACTICE_NAME?.trim() || "Consultorio Demo";
 
 export const practice = {
-  name: "Miami Smile Dental",
-  tagline: "Modern dentistry in the heart of Miami",
-  city: "Miami",
-  state: "FL",
-  addressStreet,
-  addressLine: `${addressStreet} (demo address — not a real location)`,
-  phoneDisplay: "(305) 555-0142",
+  name,
+  initials: name.split(/\s+/).slice(0, 2).map((word) => word[0]).join("").toUpperCase(),
+  tagline: "Consultorio odontológico ficticio de demostración",
+  country: "Argentina",
+  city: null as string | null,
+  addressLine: null as string | null,
+  phoneDisplay: null as string | null,
+  email: null as string | null,
   isFictional: true,
 } as const;

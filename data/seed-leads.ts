@@ -42,7 +42,7 @@ export const seedLeads: Lead[] = [
       {
         id: "m12",
         role: "ai",
-        text: "Perfect. I've captured your request. A member of the Miami Smile Dental team will follow up to confirm your consultation.",
+        text: "Your fictional request is saved in this browser. No clinic receives it; this is not a confirmed appointment.",
         timestamp: hoursAgo(26),
       },
     ],
@@ -127,7 +127,7 @@ export const seedLeads: Lead[] = [
       {
         id: "o12",
         role: "ai",
-        text: "Perfect. I've captured your request. A member of the Miami Smile Dental team will follow up to confirm your consultation.",
+        text: "Your fictional request is saved in this browser. No clinic receives it; this is not a confirmed appointment.",
         timestamp: hoursAgo(72),
       },
     ],

@@ -1,10 +1,18 @@
-# FrontDesk AI — Demo (Miami Smile Dental)
+# Asistente Dental — Demo para Argentina (Consultorio Demo)
 
 Commercial demo of an AI receptionist for dental practices. Built with Next.js
 (App Router), TypeScript, and Tailwind CSS. Fictional mode needs no API keys.
 An optional server endpoint can verify contacts using Resend, Twilio Verify and
 Upstash Redis once configured; it is disabled by default. Lead data stays in each
 visitor's browser. Hosting does not create a shared lead database or notify a clinic.
+
+La identidad del producto es provisional y configurable con `NEXT_PUBLIC_PRODUCT_NAME`;
+el consultorio ficticio usa `NEXT_PUBLIC_PRACTICE_NAME`. No hay dirección ni teléfono
+de un consultorio real configurados. El idioma inicial es español y se conserva el
+selector de inglés. Cambiar estos nombres no activa una instalación para pacientes.
+
+- [Hosting, dominio, correo, WhatsApp, base de datos y costos en Argentina](docs/argentina-implementacion.md)
+- [Revisión legal preliminar para consultorios argentinos](docs/legal-review.md)
 
 - Live demo: https://frontdesk-ai-flame.vercel.app
 - GitHub (private): https://github.com/frangaming67/frontdesk-ai
@@ -67,7 +75,7 @@ Optional verified contact details are real personal data; see the privacy notice
 ## Scroll, verificación y avisos legales
 
 El recorrido verde se fija mientras se ensancha con el scroll y revela tres etapas:
-consultas, conexión con FrontDesk y resultados para el equipo. Las líneas se dibujan
+consultas, conexión con el asistente y resultados para el equipo. Las líneas se dibujan
 en ese orden y el recorrido retrocede al subir. Funciona con rueda, barra y teclado,
 sin interceptar el desplazamiento del navegador. Desde 900 × 650 px se mantiene
 fijo durante el recorrido. En celular y tablet de menos de 900 px, se abre con
@@ -83,7 +91,7 @@ están implementados, pero la entrega real requiere validación con cuentas conf
 - [Activar email/SMS en Vercel](docs/verification-setup.md)
 - [Revisión legal y pendientes antes de operar](docs/legal-review.md)
 
-El aviso público no sustituye asesoramiento legal ni certifica cumplimiento HIPAA.
+El aviso público no sustituye asesoramiento legal ni certifica cumplimiento normativo.
 Falta completar identidad/contacto del operador; no se inventaron datos legales.
 
 ## Mejoras para las demos comerciales

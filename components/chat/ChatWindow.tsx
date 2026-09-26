@@ -67,7 +67,7 @@ export function ChatWindow() {
   ];
   const placeholders: Partial<Record<ConversationStage, string>> = {
     awaiting_name: t("Your demo name, e.g. Alex Morgan…", "Tu nombre ficticio, p. ej., Alex Morgan…"),
-    awaiting_contact: t("Email or phone number with area code…", "Correo o teléfono con código de área…"),
+    awaiting_contact: t("Fictional email, e.g. alex@example.com…", "Correo ficticio, p. ej. alex@example.com…"),
     awaiting_day: t("Which day works best for you?", "¿Qué día te queda mejor?"),
     awaiting_time: t("Morning or afternoon?", "¿Por la mañana o por la tarde?"),
   };
@@ -191,7 +191,7 @@ export function ChatWindow() {
       <div className="flex shrink-0 items-center justify-between gap-3 border-b border-line-soft px-4 py-4 sm:px-6 sm:py-5">
         <div className="flex min-w-0 items-center gap-3">
           <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-teal text-sm font-semibold tracking-tight text-white">
-            MS
+            {practice.initials}
             <span aria-hidden="true" className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white bg-[#87B99A]" />
           </div>
           <div className="min-w-0">

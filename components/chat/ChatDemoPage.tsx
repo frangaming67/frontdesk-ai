@@ -72,7 +72,7 @@ export function ChatDemoPage() {
           <ChatWindow />
         </section>
       </main>
-      <div className="px-4 pb-6"><p className="mb-3 text-center text-[11px] text-ink-soft">{t("For adults 18+ · No medical advice · In an emergency call 911 (US) or your local emergency number.", "Para mayores de 18 años · Sin asesoramiento médico · En una emergencia llama al 911 (EE. UU.) o al número local.")}</p><LegalLinks /></div>
+      <div className="px-4 pb-6"><p className="mb-3 text-center text-[11px] text-ink-soft">{t("For adults 18+ · No medical advice · In an emergency contact your local emergency service.", "Para mayores de 18 años · Sin asesoramiento médico · En una emergencia contacta al servicio local de emergencias.")}</p><LegalLinks /></div>
     </div>
   );
 }

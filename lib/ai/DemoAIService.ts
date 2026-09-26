@@ -25,7 +25,7 @@ const FALLBACKS_ES = [
   "No tengo esa información en esta demo. Puedes preguntar por tratamientos, precios, seguros u horarios, o probar una solicitud de consulta ficticia.",
   "¿Podrías reformular tu pregunta o decirme qué tratamiento te interesa? También puedes escribir 'solicitar una consulta' para comenzar.",
 ];
-const MEDICAL_DEFLECTION = "Our dental team needs to evaluate medical questions directly. I can't assess symptoms or recommend treatment here. For an emergency, call 911 in the US or your local emergency number; this demo is not monitored.";
+const MEDICAL_DEFLECTION = "Our dental team needs to evaluate medical questions directly. I can't assess symptoms or recommend treatment here. For an emergency, contact your local emergency service; this demo is not monitored.";
 const CONSULT_PROMPT = "Would you like me to help you request a consultation?";
 
 function isNegative(text: string) {
@@ -57,7 +57,7 @@ export class DemoAIService implements AIService {
   }
 
   greeting(): string {
-    return this.t(`Hi! I'm the AI receptionist for ${practice.name}. I can answer questions about our treatments, hours, or help you request a consultation. What can I help you with?`, `¡Hola! Soy el recepcionista virtual de ${practice.name}. Puedo responder preguntas sobre tratamientos, horarios o ayudarte a solicitar una consulta. ¿En qué puedo ayudarte?`);
+    return this.t(`Hi! I'm the virtual receptionist for ${practice.name}, a fictional practice. Explore example treatments and hours or try a consultation request. Use made-up details and do not share health information. What can I help you with?`, `¡Hola! Soy el recepcionista virtual de ${practice.name}, un consultorio ficticio. Puedes explorar tratamientos y horarios de ejemplo o probar una solicitud de consulta. Usa datos inventados y no compartas información de salud. ¿En qué puedo ayudarte?`);
   }
 
   respond(state: ConversationState, userMessageRaw: string): AIReply {
@@ -78,7 +78,7 @@ export class DemoAIService implements AIService {
     if (MEDICAL.test(text) || MEDICAL_ES.test(text)) {
       const followUp = this.pendingPrompt(next.stage) ?? (next.stage === "completed" ? this.t("Please discuss this with the dental team directly.", "Consulta esto directamente con el equipo dental.") : this.consultPrompt);
       if (next.stage === "exploring") next.stage = "offer_consult";
-      return { message: `${this.t(MEDICAL_DEFLECTION, "El equipo dental debe evaluar las preguntas médicas directamente. No puedo evaluar síntomas ni recomendar tratamientos aquí. En una emergencia, llama al 911 en EE. UU. o al número local; esta demo no está monitoreada.")} ${followUp}`, state: next, leadReady: false };
+      return { message: `${this.t(MEDICAL_DEFLECTION, "El equipo dental debe evaluar las preguntas médicas directamente. No puedo evaluar síntomas ni recomendar tratamientos aquí. En una emergencia, contacta al servicio local de emergencias; esta demo no está monitoreada.")} ${followUp}`, state: next, leadReady: false };
     }
 
     if (next.stage.startsWith("awaiting_")) {
@@ -222,13 +222,13 @@ export class DemoAIService implements AIService {
   private startRequest(state: ConversationState): AIReply {
     state.stage = "awaiting_name";
     state.treatmentInterest ??= "General Consultation";
-    return { message: this.t("I'd be happy to help you request a consultation. What's your name?", "Con gusto te ayudo a solicitar una consulta. ¿Cómo te llamas?"), state, leadReady: false };
+    return { message: this.t("Let's try a fictional consultation request. What's your name for this demo? Please use a made-up name.", "Probemos una solicitud de consulta ficticia. ¿Qué nombre inventado quieres usar en esta demo?"), state, leadReady: false };
   }
 
   private handleAwaitingName(state: ConversationState, text: string): AIReply {
     const name = text.replace(/^(?:my name is|the name is|i am|i['’]m|it's|it is|this is|me llamo|mi nombre es|soy)\s+/i, "").replace(/[.!]+$/, "").trim();
     if (!/^[\p{L}][\p{L}\p{M}'’. -]{1,79}$/u.test(name) || AFFIRMATIVE.test(normalizeText(name))) {
-      return { message: this.t("Could you share your name so I can prepare your consultation request?", "¿Puedes decirme tu nombre para preparar la solicitud de consulta?"), state, leadReady: false };
+      return { message: this.t("Could you share a made-up name for this demo request?", "¿Puedes darme un nombre inventado para esta solicitud de prueba?"), state, leadReady: false };
     }
     state.draft.name = name;
     state.stage = "awaiting_contact";
@@ -238,7 +238,7 @@ export class DemoAIService implements AIService {
   private handleAwaitingContact(state: ConversationState, text: string): AIReply {
     const contact = extractContact(text);
     if (!contact) {
-      return { message: this.t("Please share a demo email (like alex@example.com) or a phone number with an area code. The next step lets you choose fictional details or optional verification.", "Comparte un correo de prueba (como alex@example.com) o un teléfono con código de área. Después podrás elegir datos ficticios o una verificación opcional."), state, leadReady: false };
+      return { message: this.t("Please use a fictional email such as alex@example.com for this demo request.", "Usa un correo ficticio como alex@example.com para esta solicitud de prueba."), state, leadReady: false };
     }
     state.draft.contact = contact;
     state.stage = "awaiting_day";
@@ -251,8 +251,8 @@ export class DemoAIService implements AIService {
 
   private pendingPrompt(stage: ConversationStage): string | undefined {
     switch (stage) {
-      case "awaiting_name": return this.t("What's your name?", "¿Cómo te llamas?");
-      case "awaiting_contact": return this.t("What email or phone number would you like to use for this demo? You can use alex@example.com. Nothing is sent without your permission in the next step.", "¿Qué correo o teléfono quieres usar en esta demo? Puedes usar alex@example.com. No se envía nada sin tu permiso en el siguiente paso.");
+      case "awaiting_name": return this.t("What's your name for this demo? Please use a made-up name.", "¿Qué nombre inventado quieres usar en esta demo?");
+      case "awaiting_contact": return this.t("Use a fictional email such as alex@example.com for this demo. Nothing is sent without your permission in the next step.", "Usa un correo ficticio como alex@example.com para esta demo. No se envía nada sin tu permiso en el siguiente paso.");
       case "awaiting_day": return this.t("What day would generally work best for a consultation?", "¿Qué día te vendría mejor para una consulta?");
       case "awaiting_time": return this.t("Do you generally prefer morning or afternoon?", "¿Prefieres por la mañana o por la tarde?");
       case "offer_consult": return this.consultPrompt;

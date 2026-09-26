@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { LanguageProvider } from "@/components/i18n/LanguageProvider";
 import { LANGUAGE_COOKIE, parseLocale } from "@/lib/i18n/types";
 import { getSiteUrl, siteDescription, siteTitle } from "@/lib/site";
+import { branding } from "@/lib/branding";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -21,11 +22,12 @@ export const metadata: Metadata = {
   metadataBase: getSiteUrl(),
   title: siteTitle,
   description: siteDescription,
-  applicationName: "FrontDesk AI",
+  applicationName: branding.name,
   openGraph: {
     type: "website",
-    locale: "en_US",
-    siteName: "FrontDesk AI",
+    locale: branding.openGraphLocale,
+    alternateLocale: "en_US",
+    siteName: branding.name,
     title: siteTitle,
     description: siteDescription,
   },
@@ -33,7 +35,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: siteTitle,
     description: siteDescription,
-    images: [{ url: "/opengraph-image", alt: "FrontDesk AI — A new patient inquiry becomes a consultation request." }],
+    images: [{ url: "/opengraph-image", alt: `${branding.name} — Demo para consultorios odontológicos.` }],
   },
 };
 

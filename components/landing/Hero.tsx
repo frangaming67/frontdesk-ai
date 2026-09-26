@@ -5,6 +5,7 @@ import { useLanguage } from "@/components/i18n/LanguageProvider";
 import { treatmentLabel } from "@/lib/i18n/labels";
 import { Icon } from "@/components/ui/Icon";
 import { practice, treatments } from "@/lib/knowledge-base";
+import { branding } from "@/lib/branding";
 
 export function Hero() {
   const { t, locale } = useLanguage();
@@ -19,7 +20,7 @@ export function Hero() {
             {t("A warm welcome.", "Una cálida bienvenida.")}<br /><span className="text-teal">{t("Even after hours.", "A cualquier hora.")}</span>
           </h1>
           <p className="mt-6 max-w-[440px] text-base leading-[1.8] text-ink-soft sm:text-[17px]">
-            {t("Turn patient questions into your team's next conversation. FrontDesk AI answers, captures interest, and helps people take the first step.", "Convierte las preguntas de tus pacientes en nuevas conversaciones para tu equipo. FrontDesk AI responde, registra su interés y los ayuda a dar el primer paso.")}
+            {t(`Turn patient questions into your team's next conversation. ${branding.name} answers, captures interest, and helps people take the first step.`, `Convierte las preguntas de tus pacientes en nuevas conversaciones para tu equipo. ${branding.name} responde, registra su interés y los ayuda a dar el primer paso.`)}
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link href="/chat" className="button-primary px-6 py-3.5">{t("Meet your AI receptionist", "Conoce a tu recepcionista IA")} <Icon name="arrow-right" size={17} className="shrink-0" /></Link>

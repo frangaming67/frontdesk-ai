@@ -2,6 +2,7 @@
 
 import { Icon } from "@/components/ui/Icon";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
+import { branding } from "@/lib/branding";
 
 export function ProblemSection() {
   const { t } = useLanguage();
@@ -23,7 +24,7 @@ export function ProblemSection() {
           </div>
           <div className="rounded-3xl border border-teal/15 bg-teal-tint p-6">
             <span className="mb-5 inline-flex size-10 items-center justify-center rounded-xl bg-teal text-white"><Icon name="message" /></span>
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-teal">{t("With FrontDesk AI", "Con FrontDesk AI")}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-teal">{t(`With ${branding.name}`, `Con ${branding.name}`)}</p>
             <p className="mt-3 font-display text-2xl leading-tight">{t("“Happy to help.”", "“Con gusto te ayudo.”")}</p>
             <p className="mt-3 text-sm leading-6 text-ink-soft">{t("Their question gets a response. Their interest is captured. Your team knows exactly where to pick up.", "Su pregunta recibe una respuesta. Su interés queda registrado. Tu equipo sabe cómo continuar la conversación.")}</p>
             <div className="mt-6 flex items-center gap-2 text-xs font-medium text-teal"><Icon name="check" size={15} className="shrink-0" /> {t("A conversation worth continuing", "Una conversación para continuar")}</div>

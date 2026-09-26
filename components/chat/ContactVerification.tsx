@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
 import { CONSENT_VERSION, normalizeContact } from "@/lib/verification/contact";
 import type { ContactVerificationRecord } from "@/lib/leads/types";
+import { branding } from "@/lib/branding";
 
 export function ContactVerification({ contact, onComplete, onCancel }: { contact: string; onComplete: (contact: string, verification?: ContactVerificationRecord) => void; onCancel: () => void }) {
   const { t, locale } = useLanguage();
@@ -60,7 +61,7 @@ export function ContactVerification({ contact, onComplete, onCancel }: { contact
       {canSend && <>
         <label className="mt-4 flex items-start gap-3 text-xs leading-5 text-ink-soft">
           <input type="checkbox" checked={consent} onChange={event => setConsent(event.target.checked)} disabled={busy || !!challengeId} className="mt-1 size-4 shrink-0 accent-teal" />
-          <span>{t("I am 18 or older, this contact belongs to me, and I request a verification code from FrontDesk AI. No marketing. SMS message/data rates may apply. I have read the", "Tengo 18 años o más, este contacto es mío y solicito un código de FrontDesk AI. Sin publicidad. Pueden aplicarse cargos de SMS/datos. Leí el aviso de")} <Link href="/privacy" target="_blank" rel="noreferrer" className="text-teal underline">{t("privacy notice", "privacidad")}</Link> {t("and", "y los")} <Link href="/terms" target="_blank" rel="noreferrer" className="text-teal underline">{t("demo terms", "términos de la demo")}</Link>.</span>
+          <span>{t(`I am 18 or older, this contact belongs to me, and I request a verification code from ${branding.name}. No marketing. SMS message/data rates may apply. I have read the`, `Tengo 18 años o más, este contacto es mío y solicito un código de ${branding.name}. Sin publicidad. Pueden aplicarse cargos de SMS/datos. Leí el aviso de`)} <Link href="/privacy" target="_blank" rel="noreferrer" className="text-teal underline">{t("privacy notice", "privacidad")}</Link> {t("and", "y los")} <Link href="/terms" target="_blank" rel="noreferrer" className="text-teal underline">{t("demo terms", "términos de la demo")}</Link>.</span>
         </label>
         {challengeId && <>
           <p role="status" className="mt-3 text-xs leading-5 text-teal">{t("The provider accepted the code request. Check your email (including spam) or SMS. It expires in 10 minutes; delivery may take a moment.", "El proveedor aceptó el envío del código. Revisa tu correo (incluido spam) o SMS. Vence en 10 minutos; puede demorar en llegar.")}</p>

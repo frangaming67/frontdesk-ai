@@ -1,7 +1,9 @@
+import { branding } from "@/lib/branding";
+
 export type Locale = "en" | "es";
 
 export const LANGUAGE_COOKIE = "frontdesk-language";
 
 export function parseLocale(value: string | undefined): Locale {
-  return value === "es" ? "es" : "en";
+  return value === "en" || value === "es" ? value : branding.defaultLocale;
 }

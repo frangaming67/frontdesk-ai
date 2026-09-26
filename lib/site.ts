@@ -1,3 +1,5 @@
+import { branding } from "./branding";
+
 // Vercel supplies the public host at build time; no API keys are needed.
 // NEXT_PUBLIC_SITE_URL is an optional override for a custom domain.
 export function getSiteUrl(): URL {
@@ -16,6 +18,6 @@ export function getSiteUrl(): URL {
   return new URL(url.origin);
 }
 
-export const siteTitle = "FrontDesk AI — Never miss a new patient again";
+export const siteTitle = `${branding.name} — Demo para consultorios odontológicos`;
 export const siteDescription =
-  "An AI receptionist demo for dental practices. Answer patient questions, qualify interest, and capture consultation requests — day or night.";
+  "Demo de un asistente para consultorios odontológicos en Argentina. Explora respuestas y solicitudes de consulta con datos ficticios.";

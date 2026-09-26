@@ -1,6 +1,9 @@
 # Activar confirmación por email y SMS
 
 Estado inicial: **desactivada**. El dueño aún no tiene dominio ni proveedores.
+El producto se prepara para Argentina. El adaptador SMS actual aún acepta sólo
+numeración +1; no está listo para números argentinos ni es una integración WhatsApp.
+Ver [plan para Argentina](argentina-implementacion.md) antes de elegir los canales.
 La demo ficticia se puede publicar y probar sin cuentas, claves ni gastos.
 No se creó ninguna cuenta ni se contrató ningún servicio durante esta implementación.
 
@@ -22,11 +25,12 @@ commits, capturas o variables `NEXT_PUBLIC_`. No activar en previews por defecto
 | `NEXT_PUBLIC_SITE_URL` | Origen público exacto, por ejemplo `https://frontdesk-ai-flame.vercel.app` |
 | `LEGAL_OPERATOR_NAME` | Nombre real del responsable, persona o entidad |
 | `LEGAL_OPERATOR_COUNTRY` | País real de operación |
+| `LEGAL_OPERATOR_ADDRESS` | Domicilio real del responsable, visible en el aviso de privacidad |
 | `LEGAL_CONTACT_EMAIL` | Buzón atendido para privacidad, soporte y accesibilidad |
 | `VERIFICATION_SECRET` | Secreto aleatorio de al menos 32 caracteres, exclusivo de este proyecto |
 | `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | URL HTTPS y token privado de una base Redis de este proyecto |
 | `RESEND_API_KEY` | Clave con permiso para enviar desde el dominio verificado |
-| `VERIFICATION_EMAIL_FROM` | `FrontDesk AI <verify@tu-dominio.com>` |
+| `VERIFICATION_EMAIL_FROM` | Nombre del producto y dirección en un dominio verificado, por ejemplo `Asistente Dental <verify@tu-dominio.com>` |
 | `TWILIO_ACCOUNT_SID` / `TWILIO_AUTH_TOKEN` | Credenciales privadas de Twilio |
 | `TWILIO_VERIFY_SERVICE_SID` | Servicio Verify con código de 6 dígitos y 10 minutos de vigencia |
 | `CONTACT_PRIVACY_REVIEWED` | `true` solo después de revisar identidad, avisos, proveedores, retenciones y consentimiento |

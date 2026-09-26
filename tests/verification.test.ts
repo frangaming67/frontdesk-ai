@@ -32,6 +32,29 @@ function fixture(available = { email: true, sms: true }) {
 }
 const errorCode = (code: string) => (error: unknown) => error instanceof VerificationError && error.code === code;
 
+test("real sending stays disabled when the operator address is missing", () => {
+  const values: Record<string, string> = {
+    CONTACT_VERIFICATION_ENABLED: "true", CONTACT_PRIVACY_REVIEWED: "true",
+    LEGAL_OPERATOR_NAME: "Test operator", LEGAL_OPERATOR_COUNTRY: "Argentina",
+    LEGAL_OPERATOR_ADDRESS: "", LEGAL_CONTACT_EMAIL: "privacy@example.com",
+    UPSTASH_REDIS_REST_URL: "https://redis.example.com", UPSTASH_REDIS_REST_TOKEN: "test-only",
+    VERIFICATION_SECRET: "test-only-secret-at-least-32-characters", NEXT_PUBLIC_SITE_URL: "https://example.com",
+    RESEND_API_KEY: "test-only", VERIFICATION_EMAIL_FROM: "Test <verify@example.com>",
+    TWILIO_ACCOUNT_SID: "test-only", TWILIO_AUTH_TOKEN: "test-only", TWILIO_VERIFY_SERVICE_SID: "test-only",
+  };
+  const previous = Object.fromEntries(Object.keys(values).map(key => [key, process.env[key]]));
+  try {
+    Object.assign(process.env, values);
+    assert.deepEqual(verificationAvailability(), { email: false, sms: false });
+    process.env.LEGAL_OPERATOR_ADDRESS = "Test address (fixture only)";
+    assert.deepEqual(verificationAvailability(), { email: true, sms: true });
+  } finally {
+    for (const [key, value] of Object.entries(previous)) {
+      if (value === undefined) delete process.env[key]; else process.env[key] = value;
+    }
+  }
+});
+
 test("contact validation normalizes email/+1 numbers and rejects injection and unsupported numbers", () => {
   assert.deepEqual(normalizeContact(" ALEX@Example.com "), { channel: "email", value: "alex@example.com" });
   assert.deepEqual(normalizeContact("(305) 555-0142"), { channel: "sms", value: "+13055550142" });

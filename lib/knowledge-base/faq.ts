@@ -15,8 +15,8 @@ export const faq: FaqEntry[] = [
     id: "new-patients",
     keywords: ["new patient", "new patients", "accept new", "accepting patients", "taking patients", "first visit", "first time", "never been", "nuevo paciente", "nuevos pacientes", "primera visita", "primera vez"],
     answer:
-      "Yes, Miami Smile Dental is currently accepting new patients. I can help you request a consultation whenever you're ready.",
-    answerEs: "Sí, Miami Smile Dental acepta nuevos pacientes. Puedo ayudarte a solicitar una consulta cuando quieras.",
+      `${practice.name} is a fictional practice. You can try a new patient consultation request with made-up details; no clinic receives it.`,
+    answerEs: `${practice.name} es un consultorio ficticio. Puedes probar una solicitud de consulta como paciente nuevo con datos inventados; ningún consultorio la recibe.`,
   },
   {
     id: "insurance",
@@ -34,14 +34,14 @@ export const faq: FaqEntry[] = [
   {
     id: "location",
     keywords: ["where are you", "where is the office", "where is your office", "where's your office", "where are you based", "location", "located", "address", "directions", "dónde están", "dónde queda", "dónde se encuentran", "ubicación", "dirección", "cómo llegar"],
-    answer: `Our demo practice is in ${practice.city}, ${practice.state}. The fictional address is ${practice.addressLine}.`,
-    answerEs: `La clínica de demostración está en ${practice.city}, ${practice.state}. Su dirección ficticia es ${practice.addressStreet} (dirección de ejemplo; no es una ubicación real).`,
+    answer: practice.addressLine ? `The practice address is ${practice.addressLine}.` : `${practice.name} is a fictional practice used for a demo in Argentina. No address is configured and there is no office to visit.`,
+    answerEs: practice.addressLine ? `La dirección del consultorio es ${practice.addressLine}.` : `${practice.name} es un consultorio ficticio para una demo en Argentina. No tiene una dirección configurada ni un lugar al que puedas asistir.`,
   },
   {
     id: "phone",
-    keywords: ["your phone", "your number", "office number", "call you", "call the office", "telephone", "contact the office", "su teléfono", "su número", "teléfono de la clínica", "llamarlos", "contactar con la clínica"],
-    answer: `The fictional demo phone number for ${practice.name} is ${practice.phoneDisplay}. You can also request a consultation here.`,
-    answerEs: `El teléfono ficticio de ${practice.name} para esta demostración es ${practice.phoneDisplay}. También puedes solicitar una consulta aquí.`,
+    keywords: ["your phone", "your number", "office number", "call you", "call the office", "telephone", "contact the office", "whatsapp", "su teléfono", "su número", "teléfono de la clínica", "teléfono del consultorio", "llamarlos", "contactar con la clínica", "contactar al consultorio"],
+    answer: practice.phoneDisplay ? `The contact number for ${practice.name} is ${practice.phoneDisplay}.` : `No phone or WhatsApp number is configured for ${practice.name}. This demo does not contact a real clinic.`,
+    answerEs: practice.phoneDisplay ? `El teléfono de ${practice.name} es ${practice.phoneDisplay}.` : `${practice.name} no tiene teléfono ni WhatsApp configurados. Esta demo no contacta a un consultorio real.`,
   },
   {
     id: "payment-options",

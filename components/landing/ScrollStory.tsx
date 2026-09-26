@@ -4,6 +4,7 @@ import { useEffect, useRef, type CSSProperties } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
 import { Icon, type IconName } from "@/components/ui/Icon";
+import { branding } from "@/lib/branding";
 
 const clamp = (value: number) => Math.min(1, Math.max(0, value));
 
@@ -91,7 +92,7 @@ export function ScrollStory() {
     { icon: "users", label: t("A captured contact", "Un contacto registrado"), detail: t("Interest, details, and preferences.", "Interés, datos y preferencias.") },
     { icon: "check-circle", label: t("A clear next step", "El siguiente paso, claro"), detail: t("Your team reviews and confirms.", "Tu equipo revisa y confirma.") },
   ];
-  const steps = [t("A question comes in", "Llega una consulta"), t("FrontDesk connects", "FrontDesk conecta"), t("Your team takes over", "Tu equipo continúa")];
+  const steps = [t("A question comes in", "Llega una consulta"), t("The assistant connects", "El asistente conecta"), t("Your team takes over", "Tu equipo continúa")];
 
   return (
     <section className="journey" aria-labelledby="journey-title">
@@ -104,7 +105,7 @@ export function ScrollStory() {
         <div ref={stage} className="journey-sticky">
           <div className="journey-panel">
             <div className="journey-caption">
-              <span className="flex items-center gap-2"><span className="size-1.5 rounded-full bg-[#C5D8B7]" />{t("THE FRONTDESK FLOW", "EL RECORRIDO FRONTDESK")}</span>
+              <span className="flex items-center gap-2"><span className="size-1.5 rounded-full bg-[#C5D8B7]" />{t(`THE ${branding.name} FLOW`, `EL RECORRIDO DE ${branding.name}`)}</span>
               <span>{t("Illustrative demo", "Demo ilustrativa")}</span>
             </div>
             <ol className="journey-steps" aria-label={t("Conversation flow", "Recorrido de la conversación")}>
@@ -135,7 +136,7 @@ export function ScrollStory() {
                 <span data-flow-reveal className="journey-mobile-connector journey-mobile-connector-out" aria-hidden="true" />
                 <div data-flow-reveal className="journey-orbit" aria-hidden="true" />
                 <span data-flow-reveal className="journey-mark"><Icon name="message" size={35} /></span>
-                <p data-flow-reveal className="journey-brand">FrontDesk <span>AI</span></p>
+                <p data-flow-reveal className="journey-brand">{branding.name}</p>
                 <p data-flow-reveal className="journey-center-detail">{t("A warm welcome, at every step.", "Una cálida bienvenida, en cada paso.")}</p>
                 <span data-flow-reveal className="journey-center-tag"><span />{t("Every conversation, connected", "Cada conversación, conectada")}</span>
               </div>

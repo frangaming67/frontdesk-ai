@@ -2,17 +2,18 @@
 
 import type { ChatMessage } from "@/lib/leads/types";
 import { useLanguage } from "@/components/i18n/LanguageProvider";
+import { practice } from "@/lib/knowledge-base/practice";
 
 export function MessageBubble({ message }: { message: ChatMessage }) {
   const { locale, t } = useLanguage();
   const isAI = message.role === "ai";
-  const time = new Date(message.timestamp).toLocaleTimeString(locale === "es" ? "es-US" : "en-US", { hour: "numeric", minute: "2-digit" });
+  const time = new Date(message.timestamp).toLocaleTimeString(locale === "es" ? "es-AR" : "en-US", { hour: "numeric", minute: "2-digit" });
 
   return (
     <div className={`message-enter flex gap-2.5 ${isAI ? "justify-start" : "justify-end"}`}>
       {isAI && (
         <div aria-hidden="true" className="mt-6 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-teal-tint text-[10px] font-semibold text-teal">
-          MS
+          {practice.initials}
         </div>
       )}
       <div className="max-w-[88%] sm:max-w-[85%]">
