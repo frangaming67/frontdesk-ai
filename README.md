@@ -122,7 +122,7 @@ En esta copia está dentro de una segunda carpeta `frontdesk-ai`.
 ### Opción rápida: desde PowerShell, sin preparar GitHub
 
 ```powershell
-cd C:\Users\franc\Downloads\frontdesk-ai\frontdesk-ai
+cd ruta\a\frontdesk-ai
 npx vercel@latest login
 npx vercel@latest --prod
 ```
